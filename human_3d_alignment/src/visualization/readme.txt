@@ -1,0 +1,1 @@
+These source files should be shared and not copied, as they are used in other projects too.
