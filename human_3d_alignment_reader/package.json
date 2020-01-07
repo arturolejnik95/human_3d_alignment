@@ -1,0 +1,74 @@
+{
+  "name": "matching-js",
+  "version": "0.0.1",
+  "description": "GUI for the 3D matching experiment",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "gulp"
+  },
+  "repository": {
+    "type": "svn",
+    "url": "https://www.framsticks.com/svn/framsticks/js/human_3d_alignment/"
+  },
+  "keywords": [
+    "evolutionary design",
+    "3D model",
+    "alignment",
+    "Framsticks",
+    "artificial life",
+    "simulation",
+    "evolution",
+    "similarity",
+    "global convexity"
+  ],
+  "contributors": [
+    "Maciej Komosinski <maciej.komosinski@cs.put.poznan.pl>",
+    "Grzegorz Latosiński",
+    "Agnieszka Mensfelt <agnieszka.mensfelt@cs.put.poznan.pl>",
+    "Szymon Ulatowski"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "http://framsticks.com/trac/framsticks/report"
+  },
+  "dependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-es2015": "^6.24.1",
+    "eslint-plugin-react": "^7.5.1",
+    "gulp-eslint": "^4.0.1",
+    "gulp-sourcemaps": "^2.6.3",
+    "immutability-helper": "^2.6.0",
+    "lodash": "^4.17.4",
+    "notevil": "^1.1.0",
+    "prop-types": "^15.6.0",
+    "react": "^16.2.0",
+    "react-contenteditable": "^2.0.5",
+    "react-dom": "^16.2.0",
+    "react-grid-layout": "^0.16.6",
+    "react-icons": "^2.2.7",
+    "react-input-slider": "^5.1.4",
+    "react-select": "^3.0.8",
+    "react-treebeard": "^2.1.0",
+    "strip-comment": "^1.1.3",
+    "three": "^0.88.0",
+    "three-css3drenderer": "^1.0.1",
+    "three-orbit-controls": "^82.1.0",
+    "three-trackballcontrols": "0.0.8",
+    "three-transform-controls": "^1.0.4",
+    "tween": "^0.9.0"
+  },
+  "devDependencies": {
+    "babel-plugin-undeclared-variables-check": "^6.22.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "babelify": "^8.0.0",
+    "browser-sync": "^2.18.13",
+    "browserify": "^16.1.1",
+    "gulp": "^3.9.1",
+    "gulp-jsdoc3": "^1.0.1",
+    "gulp-sourcemaps": "^2.6.3",
+    "vinyl-buffer": "^1.0.1",
+    "vinyl-source-stream": "^2.0.0"
+  }
+}

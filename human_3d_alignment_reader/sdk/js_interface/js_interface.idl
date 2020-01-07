@@ -1,0 +1,575 @@
+interface IRange {
+	attribute long begin;
+	attribute long end;
+};
+
+interface MultiRange {
+	long rangeCount();
+	[Value] IRange getRange(long i);
+};
+
+interface SingleMapping {
+	attribute long begin;
+	[Value] attribute MultiRange to;
+};
+
+interface MultiMap {
+	void MultiMap();
+	SingleMapping getMapping(long i);
+	long rangeCount();
+	[Value] MultiRange map([Ref] MultiRange ranges);
+	void addCombined([Ref, Const] MultiMap m1, [Ref, Const] MultiMap m2);
+	void addReversed([Ref, Const] MultiMap m);
+};
+
+interface SString {
+	void SString();
+	[Operator = "="] void set([Const] DOMString ch);
+	[Const] DOMString c_str();
+};
+
+interface GenMan {
+	void GenMan();
+	void setDefaults();
+	[Value] string HTMLize([Const] DOMString g);
+	[Value] string HTMLizeShort([Const] DOMString g);
+};
+
+interface GlyphLoader {
+	void GlyphLoader();
+	[Const] DOMString getStringifiedGlyph(NeuroClass cl);
+};
+
+interface PreconfiguredGenetics {
+	void PreconfiguredGenetics();
+	[Value] attribute DefaultGenoConvManager gcm;
+	[Value] attribute GenMan genman;
+	[Value] attribute Validators validators;
+	[Value] attribute ModelGenoValidator model_validator;
+};
+
+interface string {
+	void string();
+	[Const] DOMString c_str();
+};
+
+interface SList {
+	void SList();
+	VoidPtr get(long i);
+	long size();
+};
+
+interface Pt3D {
+	attribute double x;
+	attribute double y;
+	attribute double z;
+	void Pt3D();
+};
+
+interface Orient
+{
+	[Value] attribute Pt3D x;
+	[Value] attribute Pt3D y;
+	[Value] attribute Pt3D z;
+
+	void Orient();
+	void Orient([Const, Ref] Pt3D a, [Const, Ref] Pt3D b, [Const, Ref] Pt3D c);
+
+	void rotate([Const, Ref] Pt3D rot);
+
+	[Value] Pt3D transform([Const, Ref] Pt3D src);
+	[Value] Pt3D revTransform([Const, Ref] Pt3D src);
+
+	void transformSelf([Const, Ref] Orient rot);
+	void revTransformSelf([Const, Ref] Orient rot);
+
+	[Value] Pt3D getAngles();
+	void lookAt([Const, Ref] Pt3D X, [Const, Ref] Pt3D dir);
+
+	boolean normalize();
+};
+
+enum Part_Shape {
+	"Part::SHAPE_BALL_AND_STICK",
+	"Part::SHAPE_ELLIPSOID",
+	"Part::SHAPE_CUBOID",
+	"Part::SHAPE_CYLINDER"
+};
+
+interface Part {
+	attribute long refno;
+	[Value] attribute Pt3D p;
+	[Value] attribute Orient o;
+	[Value] attribute Pt3D rot;
+	attribute double mass;
+	attribute double size;
+	attribute double density;
+	attribute double friction;
+	attribute double ingest;
+	attribute double assim;
+	attribute double hollow;
+	[Value] attribute Pt3D scale;
+	[Value] attribute Pt3D vcolor;
+	attribute double vsize;
+	attribute long shape;
+
+	void Part(optional Part_Shape s = "Part::SHAPE_BALL_AND_STICK");
+
+	void setPositionAndRotationFromAxis([Const, Ref] Pt3D p1, [Const, Ref] Pt3D p2);
+	void setOrient([Const, Ref] Orient o);
+	void setRot([Const, Ref] Pt3D r);
+
+	MultiRange getMapping();
+
+	//TODO: Extra properties
+};
+
+enum Joint_Shape {
+	"Joint::SHAPE_BALL_AND_STICK",
+	"Joint::SHAPE_FIXED"
+};
+
+interface Joint {
+	void Joint();
+	//paInt p1_refno,p2_refno;
+
+	attribute Part part1;
+	attribute Part part2;
+	[Value] attribute Pt3D d;
+	[Value] attribute Pt3D rot;
+
+	void attachToParts(Part p1, Part p2);
+	void resetDelta();
+	void useDelta(boolean use);
+	boolean isDelta();
+
+	attribute long refno;
+	attribute double stamina;
+	attribute double stif;
+	attribute double rotstif;
+	[Value] attribute Orient o;
+	attribute boolean usedelta;
+	[Value] attribute Pt3D vcolor;
+
+	attribute long shape;
+
+	MultiRange getMapping();
+};
+
+interface NeuroClass {
+	void NeuroClass();
+	[Const, Ref] SString getName();
+	long getVisualHints();
+};
+
+enum NeuroClass_Hint {
+	"NeuroClass::Invisible",
+	"NeuroClass::DontShowClass",
+	"NeuroClass::AtFirstPart",
+	"NeuroClass::AtSecondPart",
+	"NeuroClass::EffectorClass",
+	"NeuroClass::ReceptorClass",
+	"NeuroClass::V1BendMuscle",
+	"NeuroClass::V1RotMuscle",
+	"NeuroClass::LinearMuscle"
+};
+
+interface Neuro {
+	void Neuro();
+	void Neuro(double _state, double _inertia, double _force, double _sigmo);
+
+	attribute long refno;
+	void setInputInfo(long i, [Const, Ref] SString name, [Const, Ref] SString value);
+	[Value] SString getInputInfo(long i);
+	[Value] SString getInputInfo(long i, [Const, Ref] SString name);
+	NeuroClass getClass();
+	void setClass(NeuroClass class);
+	[Value] SString getClassParams();
+	void setClassParams([Const, Ref] SString cp);
+	[Value] SString getClassName();
+	void setClassName([Const, Ref] SString clazz);
+	[Value] SString getDetails();
+	void setDetails([Const, Ref] SString details);
+
+	void attachToPart(Part p);
+	void attachToJoint(Joint j);
+	Part getPart();
+	Joint getJoint();
+
+	boolean isOldEffector();
+	boolean isOldReceptor();
+	boolean isOldNeuron();
+	boolean isNNConnection();
+
+	long getInputCount();
+	long getOutputsCount();
+
+	Neuro getInput(long i);
+	double getInputWeight(long i);
+	void setInputWeight(long i, double weight);
+	void setInput(long i, Neuro n);
+	void setInput(long i, Neuro n, double weight);
+	long addInput(Neuro child, double weight, [Const] SString info);
+	long findInput(Neuro child);
+	void removeInput(long refno);
+
+	long findInputs([Ref] SList result, [Const] DOMString classname, [Const] Part part, [Const] Joint joint);
+	long findOutputs([Ref] SList result, [Const] DOMString classname, [Const] Part part, [Const] Joint joint);
+
+	MultiRange getMapping();
+};
+
+interface GenoValidator {
+};
+
+interface ModelGenoValidator : GenoValidator {
+	void ModelGenoValidator();
+};
+
+interface GenoConvManager {
+};
+
+interface DefaultGenoConvManager : GenoConvManager {
+	void DefaultGenoConvManager();
+	void addDefaultConverters();
+};
+
+[Prefix = "Geno::"]
+interface Validators {
+	void Validators();
+	void append(GenoValidator data);
+};
+
+interface Geno {
+	void Geno();
+	void Geno([Const, Ref] SString fullString);
+	void Geno([Const] DOMString genstring, byte genformat, [Const] DOMString genname, [Const] DOMString comment);
+	boolean isValid();
+	byte getFormat();
+	[Value] SString getGenes();
+	static Validators useValidators(Validators val);
+	static GenoConvManager useConverters(GenoConvManager gcm);
+};
+
+enum ModelBuildStatus {
+	"empty",
+	"building",
+	"invalid",
+	"valid"
+};
+
+enum Model_ShapeType {
+	"Model::SHAPE_UNKNOWN",
+	"Model::SHAPE_ILLEGAL",
+	"Model::SHAPE_BALL_AND_STICK",
+	"Model::SHAPE_SOLIDS"
+};
+
+interface Model {
+	[Value] attribute Pt3D size;
+	[Value] attribute SString vis_style;
+	attribute double startenergy;
+
+	void Model();
+	void Model([Ref, Const] Geno newgeno, optional boolean buildmaps = false);
+
+	[Value] MultiMap getMap();
+	[Const, Value] MultiMap getF0Map();
+	void getCurrentToF0Map([Ref] MultiMap m);
+
+	ModelBuildStatus getStatus();
+	boolean isValid();
+	long getErrorPosition(boolean includingwarnings);
+	Model_ShapeType getShapeType();
+	void updateRefno();
+	[Const, Value] Geno getF0Geno();
+	void makeGeno([Ref] Geno geno);
+	void setGeno([Const, Ref] Geno newgeno);
+	void setValidationLevel(long level);
+	[Value] Pt3D whereDelta([Const, Ref] Part start, [Const, Ref] Pt3D rot, [Const, Ref] Pt3D delta);
+	void resetAllDelta();
+	void useAllDelta(boolean yesno);
+	boolean validate();
+
+	long getPartCount();
+	Part getPart(long i);
+
+	long getJointCount();
+	Joint getJoint(long i);
+
+	long getNeuroCount();
+	long getConnectionCount();
+	Neuro getNeuro(long i);
+
+	Part addPart(Part p);
+	Joint addJoint(Joint j);
+	Neuro addNeuro(Neuro n);
+
+	Part addNewPart(Part_Shape shape);
+	Joint addNewJoint(Part p1, Part p2, Joint_Shape shape);
+	Neuro addNewNeuro();
+
+	void removePart(long partindex, optional long removeattachedjoints = 1, optional long removeattachedneurons = 1);
+	void removeJoint(long  jointindex, optional long removeattachedneurons = 1);
+	void removeNeuro(long  neuroindex, optional boolean removereferences = true);
+	void removeNeuros([Ref] SList nlist);
+
+	long findPart(Part p);
+	long findJoint(Joint j);
+	long findNeuro(Neuro nu);
+	long findJoint(Part p1, Part p2);
+
+	long findNeuros([Ref] SList result, DOMString classname, [Const] Part part, [Const] Joint joint);
+	long findJoints([Ref] SList result, [Const] Part part);
+
+	void move([Const, Ref] Pt3D shift);
+	void rotate([Const, Ref] Orient rotation);
+	void buildUsingSolidShapeTypes([Const, Ref] Model src_old_shapes, optional Part_Shape default_shape = "Part::SHAPE_CYLINDER", optional float thickness = 0.2);
+
+	void open();
+	void close();
+	void rebuild(boolean buildmaps);
+	void rebuild([Const, Ref] Geno newgeno, boolean buildmaps);
+	void clear();
+	[Const, Value] Geno getGeno();
+};
+
+interface GenotypeMini {
+	void GenotypeMini();
+	[Value] attribute SString name;
+	[Value] attribute SString genotype;
+	[Value] attribute SString info;
+	void clear();
+};
+
+interface GenotypeMiniLoader {
+	void GenotypeMiniLoader([Const] DOMString filename);
+	GenotypeMini loadNextGenotype();
+};
+
+[NoDelete]
+interface StdioFileSystem_autoselect {
+	void StdioFileSystem_autoselect();
+};
+
+interface LoggerBase {
+	void LoggerBase(optional long opts = 0);
+};
+
+enum LoggerBase_LoggerOptions {
+	"LoggerBase::DontBlock",
+	"LoggerBase::CannotBeBlocked",
+	"LoggerBase::Enable",
+	"LoggerBase::Paused"
+};
+
+interface LoggerToMemory
+{
+	void LoggerToMemory(long opts, optional long minimal_level_to_store = 2);
+
+	void reset();
+	long getErrorCount();
+	long getWarningCount();
+	long getInfoCount();
+	long getStoredCount();
+	long getErrorLevel();
+	[Value] string getMessages();
+	[Value] string getCountSummary();
+	void handle([Const] DOMString obj, [Const] DOMString method, long level, [Const] DOMString msg);
+};
+
+enum LoggerToMemory_Options2 {
+	"LoggerToMemory::StoreFirstMessage",
+	"LoggerToMemory::StoreAllMessages"
+};
+
+interface VirtFILE {
+};
+
+interface SaveFileHelper {
+	void SaveFileHelper();
+	VirtFILE Vfopen([Const] DOMString path, [Const] DOMString mode);
+	ParamEntry getMinigenotype_paramtab();
+};
+
+interface XY {
+	void XY(long x, long y);
+	attribute long x;
+	attribute long y;
+};
+
+interface XYWH : XY {
+	void XYWH(long x, long y, long w, long h);
+	attribute long x;
+	attribute long y;
+	attribute long w;
+	attribute long h;
+};
+
+interface NNLayoutState {
+};
+
+interface NNLayoutState_Model : NNLayoutState {
+};
+
+interface NNLayoutState_Model_Fred : NNLayoutState_Model {
+	void NNLayoutState_Model_Fred(Model m);
+	long GetElements();
+	[Value] XYWH GetValueXYWH(long el);
+	void SetXYWH(long el, long x, long y, long w, long h);
+	long GetInputs(long el);
+	long GetLink(long el, long i);
+	[Value] XY GetLinkValueXY(long el, long i);
+};
+
+interface NNLayoutFunctionHelper {
+	void NNLayoutFunctionHelper();
+	void doLayout(long layout_type, NNLayoutState nn_layout);
+};
+
+interface GenoOperators {
+	void GenoOperators();
+	// TODO: static long roulette(const double *probtab, long count);
+	long checkValidity([Const] DOMString geno, [Const] DOMString genoname);
+	long validate(DOMString geno, [Const] DOMString genoname);
+	[Value] SString getSimplest();
+};
+
+interface Geno_f4 : GenoOperators {
+	void Geno_f4();
+};
+
+interface Geno_fH : GenoOperators {
+	void Geno_fH();
+};
+
+interface Geno_fB : GenoOperators {
+	void Geno_fB();
+};
+
+interface Geno_fL : GenoOperators {
+	void Geno_fL();
+};
+
+interface GenoOper_f9 : GenoOperators {
+	void GenoOper_f9();
+};
+
+interface GenoOper_fF : GenoOperators {
+	void GenoOper_fF();
+};
+
+interface GenoOperatorsHelper {
+	void GenoOperatorsHelper(GenoOperators genoOper);
+	long mutate([Const] DOMString geno);
+	long crossOver([Const] DOMString geno1, [Const] DOMString geno2);
+	[Value] SString getLastMutateGeno();
+	[Value] SString getLastCrossGeno1();
+	[Value] SString getLastCrossGeno2();
+};
+
+interface ParamEntry {
+};
+
+interface ParamInterface {
+	long getGroupCount();
+	long getPropCount();
+	[Const] DOMString getName();
+	[Const] DOMString getDescription();
+	long findId([Const] DOMString n);
+	long findIdn([Const] DOMString naz, long n);
+	[Const] DOMString type(long i);
+	[Const] DOMString help(long i);
+	long flags(long i);
+	long group(long i);
+	[Const] DOMString grname(long gi);
+	[Value] SString get(long i);
+	[Value] SString getString(long i);
+	long getInt(long i);
+	double getDouble(long i);
+
+	[Value] SString getStringById([Const] DOMString prop);
+	long getIntById([Const] DOMString prop);
+	double getDoubleById([Const] DOMString prop);
+
+	long setIntFromString(long i, [Const] DOMString str, boolean strict);
+	long setDoubleFromString(long i, [Const] DOMString str);
+
+	long setInt(long i, long val);
+	long setDouble(long i, double val);
+	long setString(long i, [Const, Ref] SString str);
+
+	long setFromString(long i, [Const] DOMString str, boolean strict);
+
+	long setIntById([Const] DOMString prop, long value);
+	long setDoubleById([Const] DOMString prop, double value);
+	long setStringById([Const] DOMString prop, [Const] DOMString value);
+
+	//long getMinMaxInt(long prop, [Ref] long minimum, [Ref] long maximum, [Ref] long def);
+	//long getMinMaxDouble(long prop, [Ref] double minimum, [Ref] double maximum, [Ref] double def);
+	//long getMinMaxString(long prop, [Ref] long minimum, [Ref] long maximum, [Ref] SString def);
+	//
+	//static long getMinMaxIntFromTypeDef([Const] DOMString type, [Ref] long minimum, [Ref] long maximum, [Ref] long def);
+	//static long getMinMaxDoubleFromTypeDef([Const] DOMString type, [Ref] double minimum, [Ref] double maximum, [Ref] double def);
+	//static long getMinMaxStringFromTypeDef([Const] DOMString type, [Ref] long minimum, [Ref] long maximum, [Ref] SString def);
+
+	void setDefault();
+	void setDefault(long i);
+
+	void setMin();
+	void setMax();
+	void setMin(long i);
+	void setMax(long i);
+
+	[Value] static SString friendlyTypeDescrFromTypeDef([Const] DOMString type);
+	[Value] SString friendlyTypeDescr(long i);
+
+	void copyFrom(ParamInterface src);
+	void quickCopyFrom(ParamInterface src);
+
+	//long save(VirtFILE file, [Const] DOMString altname, optional boolean force = false);
+
+	static boolean isValidTypeDescription([Const] DOMString t);
+};
+
+interface SimpleAbstractParam : ParamInterface {
+
+};
+
+interface Param : SimpleAbstractParam {
+	void Param(ParamEntry t, VoidPtr o);
+	//long save(VirtFILE file, [Const] DOMString altname, optional boolean force = false);
+};
+
+[Prefix = "ParamTree::"]
+interface NodePtr {
+	ParamTreeNode get();
+};
+
+[Prefix = "ParamTree::"]
+interface ParamTreeNode {
+	attribute ParamTree tree;
+	attribute ParamTreeNode parent;
+	[Value] attribute string name;
+	[Value] attribute NodePtr first_child;
+	[Value] attribute NodePtr next_sibling;
+	attribute long group_index;
+};
+
+interface ParamTree {
+	[Value] attribute ParamTreeNode root;
+	ParamTreeNode addNode(ParamTreeNode parent, [Ref, Const] string name, long group);
+	ParamTreeNode findNode(ParamTreeNode parent, [Ref, Const] string name);
+	void ParamTree(ParamInterface _pi);
+};
+
+interface MutableParamList : ParamInterface {
+
+};
+
+interface ParamTreeConfigured {
+	void ParamTreeConfigured();
+	attribute ParamTree tree;
+	[Value] attribute MutableParamList paramiface;
+	ParamTree generateTree();
+};
