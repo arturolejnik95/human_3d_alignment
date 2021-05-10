@@ -39,7 +39,7 @@
     "gulp-eslint": "^4.0.1",
     "gulp-sourcemaps": "^2.6.3",
     "immutability-helper": "^2.6.0",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.21",
     "notevil": "^1.1.0",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
