@@ -65,7 +65,7 @@
     "babelify": "^8.0.0",
     "browser-sync": "^2.18.13",
     "browserify": "^16.1.1",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-jsdoc3": "^1.0.1",
     "gulp-sourcemaps": "^2.6.3",
     "vinyl-buffer": "^1.0.1",
